@@ -9,16 +9,12 @@ RUN apt-get update && apt-get install -y python3 make g++ && rm -rf /var/lib/apt
 # Install pnpm
 RUN npm install -g pnpm@10.4.1
 
-# Copy workspace configuration and package files
-COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
-COPY studio/package.json ./studio/
-COPY patches ./patches
-
-# Install ALL dependencies (including devDeps for build) - pnpm will respect the workspace
-RUN pnpm install --frozen-lockfile --recursive
-
-# Copy the rest of the source code
+# Copy all source code first so pnpm can see all package.json files in the workspace
 COPY . .
+
+# Install dependencies without --frozen-lockfile to allow pnpm to reconcile the workspace lockfile
+# and use --recursive to ensure all subpackages are installed
+RUN pnpm install --recursive
 
 # Build main app (client + server)
 RUN pnpm build
