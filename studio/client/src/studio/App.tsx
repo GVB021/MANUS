@@ -1,5 +1,5 @@
 import { Switch, Route, Redirect, Router as WouterRouter } from "wouter";
-import { memoryHook, memorySearchHook } from "@studio/lib/memory-router";
+import { memoryHook, memorySearchHook } from "@studio/lib/memory-router.ts";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@studio/components/ui/toaster";
@@ -9,7 +9,7 @@ import { useStudioAutoEntry } from "@studio/hooks/use-studios";
 import { Loader2 } from "lucide-react";
 import { lazy, Suspense } from "react";
 import { ErrorBoundary } from "@studio/components/ui/error-boundary";
-import { resolveStudioAutoEntryTarget } from "@studio/lib/studio-auto-entry";
+import { resolveStudioAutoEntryTarget } from "@studio/lib/studio-auto-entry.ts";
 
 const NotFound = lazy(() => import("@studio/pages/not-found"));
 const Landing = lazy(() => import("@studio/pages/landing"));

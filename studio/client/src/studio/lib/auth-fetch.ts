@@ -8,7 +8,12 @@ export async function authFetch(url: string, options: RequestInit = {}) {
   const res = await fetch(url, { ...options, headers, credentials: "include" });
 
   if (res.status === 401) {
-    const { memoryNavigate } = await import("@studio/lib/memory-router");
+    const { memoryNavigate } = await import("@studio/lib/memory-router.ts");
+    // Fallback if import fails
+    if (!memoryNavigate) {
+      window.location.href = "/login";
+      return;
+    }
     memoryNavigate("/login");
     throw new Error("Unauthorized");
   }

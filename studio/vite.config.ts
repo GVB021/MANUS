@@ -7,6 +7,7 @@ export default defineConfig({
     react(),
   ],
   resolve: {
+    extensions: [".ts", ".tsx", ".js", ".jsx", ".json"],
     alias: {
       "@": path.resolve(import.meta.dirname, "client", "src"),
       "@shared": path.resolve(import.meta.dirname, "shared"),
