@@ -140,7 +140,7 @@ const Productions = memo(function Productions({ studioId }: { studioId: string }
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {isLoading ? (
           <GridSkeleton count={6} />
-        ) : filtered?.map(prod => (
+        ) : filtered?.length ? filtered.map(prod => (
           <div
             key={prod.id}
             className="vhub-card-clickable p-5 group"
