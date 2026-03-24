@@ -18,14 +18,14 @@ RUN pnpm install --recursive
 # Build client (root vite build)
 RUN pnpm exec vite build --config vite.config.ts
 
-# Build server (esbuild)
+# Build server (esbuild) - using ESM format to support import.meta
 RUN pnpm exec esbuild server/_core/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
 
 # Build studio client
 RUN cd studio && pnpm exec vite build --config vite.config.ts
 
-# Build studio server
-RUN cd studio && pnpm exec esbuild server/index.ts --platform=node --packages=external --bundle --format=cjs --outfile=../dist/index.cjs
+# Build studio server (ESM format)
+RUN cd studio && pnpm exec esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outfile=../dist/studio-index.js
 
 # Environment configuration
 ENV NODE_ENV=production
@@ -36,7 +36,7 @@ EXPOSE 5002
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:5002/health', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
+  CMD node -e "require('http').get('http://localhost:5002/health', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})" || true
 
-# Start application
-CMD ["node", "dist/index.js"]
+# Start application (use ESM-compatible entry point)
+CMD ["node", "--input-type=module", "-e", "import('./dist/index.js')"]

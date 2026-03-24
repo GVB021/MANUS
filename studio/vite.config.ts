@@ -9,15 +9,15 @@ export default defineConfig({
   resolve: {
     extensions: [".ts", ".tsx", ".js", ".jsx", ".json"],
     alias: {
-      "@": path.resolve(import.meta.dirname, "client", "src"),
-      "@shared": path.resolve(import.meta.dirname, "shared"),
-      "@assets": path.resolve(import.meta.dirname, "attached_assets"),
-      "@studio": path.resolve(import.meta.dirname, "client/src/studio"),
+      "@": path.resolve((typeof __dirname !== 'undefined' ? __dirname : (process.cwd() + '/studio')), "client", "src"),
+      "@shared": path.resolve((typeof __dirname !== 'undefined' ? __dirname : (process.cwd() + '/studio')), "shared"),
+      "@assets": path.resolve((typeof __dirname !== 'undefined' ? __dirname : (process.cwd() + '/studio')), "attached_assets"),
+      "@studio": path.resolve((typeof __dirname !== 'undefined' ? __dirname : (process.cwd() + '/studio')), "client/src/studio"),
     },
   },
-  root: path.resolve(import.meta.dirname, "client"),
+  root: path.resolve((typeof __dirname !== 'undefined' ? __dirname : (process.cwd() + '/studio')), "client"),
   build: {
-    outDir: path.resolve(import.meta.dirname, "dist/public"),
+    outDir: path.resolve((typeof __dirname !== 'undefined' ? __dirname : (process.cwd() + '/studio')), "dist/public"),
     emptyOutDir: true,
   },
   server: process.env.NODE_ENV === "development" ? {

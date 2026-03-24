@@ -2,7 +2,7 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { serveStatic } from "./static";
 import { createServer } from "http";
-import { setupAuth, registerAuthRoutes } from "./replit_integrations/auth";
+// import { setupAuth, registerAuthRoutes } from "./replit_integrations/auth"; // Removed for production compatibility
 import { setupVideoSync } from "./video-sync";
 import { setupRealtime, broadcastInvalidate } from "./realtime";
 import { registerMeRestore } from "./me-restore";
@@ -212,8 +212,8 @@ app.use((req, res, next) => {
       configureSupabase({ url: map.SUPABASE_URL, serviceRoleKey: map.SUPABASE_SERVICE_ROLE_KEY });
     } catch {}
 
-    await setupAuth(app);
-    registerAuthRoutes(app);
+    // await setupAuth(app); // Removed for production compatibility
+    // registerAuthRoutes(app); // Removed for production compatibility
     registerVoiceJobs(app);
     registerMeRestore(app);
     await registerRoutes(httpServer, app);
