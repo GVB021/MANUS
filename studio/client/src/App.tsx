@@ -48,7 +48,7 @@ const Notifications = lazyWithRetry(() => import("@studio/pages/notifications"))
 const Members = lazyWithRetry(() => import("@studio/pages/members"));
 const StudioAdmin = lazyWithRetry(() => import("@studio/pages/studio-admin"));
 const Takes = lazyWithRetry(() => import("@studio/pages/takes"));
-const Profile = lazyWithRetry(() => import("@studio/pages/profile"));
+// const Profile = lazyWithRetry(() => import("@studio/pages/profile"));
 const Daw = lazyWithRetry(() => import("@studio/pages/daw"));
 const SecretariaLogin = lazyWithRetry(() => import("@studio/pages/secretaria-login"));
 
@@ -137,7 +137,7 @@ function Router() {
           </Route>
 
           <Route path="/hub-dub/profile">
-            {() => <ProtectedRoute component={Profile} />}
+            <Redirect to="/hub-dub/studios" />
           </Route>
 
           <Route path="/hub-dub/daw">
