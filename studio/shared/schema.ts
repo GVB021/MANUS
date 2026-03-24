@@ -1,5 +1,3 @@
-export * from "./models/auth";
-
 import { sql } from "drizzle-orm";
 import { pgTable, text, varchar, timestamp, boolean, integer, real, index, uniqueIndex, jsonb } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
@@ -239,3 +237,6 @@ export type Take = typeof takes.$inferSelect;
 export type AuditLog = typeof auditLog.$inferSelect;
 export type Staff = typeof staff.$inferSelect;
 export type UserStudioRole = typeof userStudioRoles.$inferSelect;
+
+// CORRIGIDO: Mover export * para o final para evitar circular dependency
+export * from "./models/auth";
