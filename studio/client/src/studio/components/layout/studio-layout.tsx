@@ -1,5 +1,5 @@
 import { useAuth } from "@studio/hooks/use-auth";
-import { ShieldAlert, LogOut, Building2, UserCircle, LayoutDashboard, Calendar } from "lucide-react";
+import { ShieldAlert, LogOut, Building2, UserCircle, LayoutDashboard, Calendar, Loader2 } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { pt } from "@studio/lib/i18n";
 
@@ -16,6 +16,15 @@ export function StudioLayout({ studioId, children }: StudioLayoutProps) {
     { title: pt.nav.dashboard, url: `/hub-dub/studio/${studioId}/dashboard`, icon: LayoutDashboard },
     { title: pt.nav.sessions, url: `/hub-dub/studio/${studioId}/sessions`, icon: Calendar },
   ];
+
+  // CORREÇÃO: Adicionar verificação de segurança para user
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen w-full bg-background text-foreground relative overflow-hidden">

@@ -1,12 +1,12 @@
 import { memo, useState } from "react";
 import { useProductions } from "@studio/hooks/use-productions";
 import { useSessions } from "@studio/hooks/use-sessions";
-import { useStudio } from "@studio/hooks/use-studios";
+import { useStudios } from "@studio/hooks/use-studios";
 import { useStudioRole } from "@studio/hooks/use-studio-role";
 import { SessionCard } from "@studio/components/dashboard/session-card";
 import { PageSection } from "@studio/components/ui/design-system";
 import { Button } from "@studio/components/ui/button";
-import { Film, Calendar, Plus, Clock, PlayCircle, Mic, SlidersHorizontal, Waves, Wind, ArrowRight } from "lucide-react";
+import { Film, Calendar, Plus, Clock, PlayCircle, Mic, SlidersHorizontal, Waves, Wind, ArrowRight, Loader2 } from "lucide-react";
 import { Link } from "wouter";
 import { pt } from "@studio/lib/i18n";
 import { isSessionVisibleOnDashboard } from "@studio/lib/session-status";
@@ -16,13 +16,27 @@ import { ptBR } from "date-fns/locale";
 import { ProductionBackgroundVideo } from "@studio/components/dashboard/production-background-video";
 
 const Dashboard = memo(function Dashboard({ studioId }: { studioId: string }) {
-  const studio = useStudio(studioId);
-  const { data: productions } = useProductions(studioId);
-  const { data: sessions } = useSessions(studioId);
+  // CORREÇÃO 1: Adicionar isLoading para todos os hooks
+  const { data: studios, isLoading: studiosLoading } = useStudios();
+  const { data: productions, isLoading: productionsLoading } = useProductions(studioId);
+  const { data: sessions, isLoading: sessionsLoading } = useSessions(studioId);
   const { canCreateProductions, canCreateSessions } = useStudioRole(studioId);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
 
-  const upcomingSessions = (sessions || []).filter(s =>
+  // CORREÇÃO 2: Aguardar o carregamento de todos os dados antes de renderizar
+  if (studiosLoading || productionsLoading || sessionsLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  // CORREÇÃO 3: Usar optional chaining para acessar studio com segurança
+  const studio = studios?.find(s => s.id === studioId);
+
+  // CORREÇÃO 4: Usar nullish coalescing e optional chaining para arrays
+  const upcomingSessions = (sessions ?? []).filter(s =>
     isSessionVisibleOnDashboard(s.scheduledAt, s.durationMinutes ?? 60)
   ).sort((a, b) => new Date(a.scheduledAt).getTime() - new Date(b.scheduledAt).getTime());
 
@@ -35,8 +49,9 @@ const Dashboard = memo(function Dashboard({ studioId }: { studioId: string }) {
   });
 
   // Find current production based on session
+  // CORREÇÃO 5: Usar optional chaining para evitar erro se productions for undefined
   const currentProduction = currentOrNextSession 
-    ? productions?.find(p => p.id === currentOrNextSession.productionId)
+    ? (productions ?? []).find(p => p.id === currentOrNextSession.productionId)
     : null;
 
   const sessionsOnSelectedDate = upcomingSessions.filter(s => 

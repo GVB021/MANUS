@@ -27,8 +27,9 @@ import { pt } from "@studio/lib/i18n";
 import { computeSessionStatus, sessionEntryAllowed, formatCountdownTime } from "@studio/lib/session-status";
 
 const Sessions = memo(function Sessions({ studioId }: { studioId: string }) {
-  const { data: sessions, isLoading } = useSessions(studioId);
-  const { data: productions } = useProductions(studioId);
+  // CORREÇÃO 1: Adicionar isLoading para productions também
+  const { data: sessions, isLoading: sessionsLoading } = useSessions(studioId);
+  const { data: productions, isLoading: productionsLoading } = useProductions(studioId);
   const createSession = useCreateSession(studioId);
   const { toast } = useToast();
   const [location, navigate] = useLocation();
@@ -36,7 +37,7 @@ const Sessions = memo(function Sessions({ studioId }: { studioId: string }) {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const isStudioAdmin = hasMinRole("studio_admin");
-  const { data: storageOptions } = useQuery({
+  const { data: storageOptions, isLoading: storageLoading } = useQuery({
     queryKey: ["/api/storage/options"],
     queryFn: () => authFetch("/api/storage/options") as Promise<any>,
   });
@@ -93,12 +94,13 @@ const Sessions = memo(function Sessions({ studioId }: { studioId: string }) {
     toast({ title: "Sessao agendada" });
   };
 
+  // CORREÇÃO 2: Usar nullish coalescing para arrays
   const filteredSessions = filterProductionId
-    ? (sessions || []).filter(s => s.productionId === filterProductionId)
-    : (sessions || []);
+    ? (sessions ?? []).filter(s => s.productionId === filterProductionId)
+    : (sessions ?? []);
 
   const filterProduction = filterProductionId
-    ? productions?.find(p => p.id === filterProductionId)
+    ? (productions ?? []).find(p => p.id === filterProductionId)
     : null;
 
   return (
@@ -140,7 +142,7 @@ const Sessions = memo(function Sessions({ studioId }: { studioId: string }) {
                           <SelectValue placeholder="Selecionar producao..." />
                         </SelectTrigger>
                         <SelectContent>
-                          {productions?.map((p) => (
+                          {(productions ?? []).map((p) => (
                             <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
                           ))}
                         </SelectContent>
@@ -175,7 +177,7 @@ const Sessions = memo(function Sessions({ studioId }: { studioId: string }) {
                           <SelectValue placeholder="Selecionar..." />
                         </SelectTrigger>
                         <SelectContent>
-                          {(storageOptions?.paths || ["uploads"]).map((p: string) => (
+                          {((storageOptions?.paths) ?? ["uploads"]).map((p: string) => (
                             <SelectItem key={p} value={p}>{p}</SelectItem>
                           ))}
                         </SelectContent>
@@ -201,14 +203,14 @@ const Sessions = memo(function Sessions({ studioId }: { studioId: string }) {
       />
 
       <div className="space-y-3">
-        {isLoading ? (
+        {sessionsLoading || productionsLoading || storageLoading ? (
           <div className="grid gap-3">
             {Array.from({ length: 3 }).map((_, i) => (
               <div key={i} className="vhub-card h-24 shimmer" />
             ))}
           </div>
         ) : filteredSessions.length ? filteredSessions.map((session) => {
-          const production = productions?.find((p) => p.id === session.productionId);
+          const production = (productions ?? []).find((p) => p.id === session.productionId);
           const computedStatus = computeSessionStatus(session.scheduledAt, session.durationMinutes ?? 60);
           const canEnter = !isRestrictedRole || sessionEntryAllowed(session.scheduledAt, 5);
           const countdown = !canEnter ? formatCountdownTime(session.scheduledAt, 5) : null;
@@ -256,43 +258,25 @@ const Sessions = memo(function Sessions({ studioId }: { studioId: string }) {
                       size="sm"
                       variant="ghost"
                       className="gap-1.5 h-8 text-xs relative z-10 text-red-500/70 hover:text-red-500"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        deleteSession.mutate(session.id);
+                      }}
                       data-testid={`button-delete-session-${session.id}`}
-                      onClick={(e) => { e.stopPropagation(); deleteSession.mutate(session.id); }}
-                      disabled={deleteSession.isPending}
                     >
-                      <Trash2 className="w-3.5 h-3.5" />
-                      Excluir
+                      <Trash2 className="w-3 h-3" />
                     </Button>
                   )}
-                  {canEnter ? (
-                    <Button
-                      size="sm"
-                      className="gap-1.5 press-effect h-8 text-xs relative z-10"
-                      data-testid={`button-join-room-${session.id}`}
-                      onClick={(e) => e.stopPropagation()}
-                      asChild
-                    >
-                      <Link href={`/hub-dub/studio/${studioId}/sessions/${session.id}/room`}>
-                        <Video className="w-3.5 h-3.5" />
-                        {pt.sessions.join}
-                      </Link>
-                    </Button>
-                  ) : (
+                  {!canEnter && (
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <Button
-                          size="sm"
-                          className="gap-1.5 h-8 text-xs relative z-10 opacity-50 cursor-not-allowed"
-                          data-testid={`button-join-room-${session.id}`}
-                          onClick={(e) => e.stopPropagation()}
-                          disabled
-                        >
-                          <Lock className="w-3.5 h-3.5" />
-                          {pt.sessions.join}
-                        </Button>
+                        <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-muted/50 text-xs text-muted-foreground">
+                          <Lock className="w-3 h-3" />
+                          {countdown}
+                        </div>
                       </TooltipTrigger>
                       <TooltipContent>
-                        Disponivel em {countdown}
+                        Apenas diretores podem entrar 5 minutos antes do início.
                       </TooltipContent>
                     </Tooltip>
                   )}
@@ -302,9 +286,21 @@ const Sessions = memo(function Sessions({ studioId }: { studioId: string }) {
           );
         }) : (
           <EmptyState
-            icon={<CalendarIcon className="w-5 h-5" />}
-            title={pt.sessions.noSessions}
-            description={filterProductionId ? "Nenhuma sessao para esta producao." : pt.sessions.noSessionsDesc}
+            icon={CalendarIcon}
+            title="Nenhuma sessao agendada"
+            description={filterProductionId ? "Nenhuma sessao para esta producao." : "Crie uma sessao para comecara gravar."}
+            action={
+              canCreateSessions ? (
+                <Dialog open={isOpen} onOpenChange={setIsOpen}>
+                  <DialogTrigger asChild>
+                    <Button size="sm" className="gap-1.5">
+                      <Plus className="w-3.5 h-3.5" />
+                      {pt.sessions.schedule}
+                    </Button>
+                  </DialogTrigger>
+                </Dialog>
+              ) : undefined
+            }
           />
         )}
       </div>

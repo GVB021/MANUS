@@ -39,9 +39,16 @@ export function useStudioAutoEntry() {
   });
 }
 
+// CORREÇÃO: Melhorado para retornar isLoading e error
 export function useStudio(id: string) {
-  const { data: studios } = useStudios();
-  return studios?.find(s => s.id === id);
+  const { data: studios, isLoading } = useStudios();
+  const studio = studios?.find(s => s.id === id);
+  
+  return {
+    studio,
+    isLoading,
+    error: !studio && !isLoading ? new Error("Studio not found") : null
+  };
 }
 
 export function useCreateStudio() {
