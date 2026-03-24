@@ -58,7 +58,7 @@ const TEACHERS = [
   {
     name: "Ettore Zuim",
     role: "Módulo Avançado",
-    photo: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=500&auto=format&fit=crop",
+    photo: "/teachers/ettore-zuim.png",
     specialties: ["Estúdio", "Mercado", "Portfólio"],
   },
 ];
