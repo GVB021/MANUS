@@ -1,5 +1,7 @@
 import { eq } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/mysql2";
+// CORRIGIDO: Trocar de "drizzle-orm/mysql2" para "drizzle-orm/node-postgres"
+// Supabase usa PostgreSQL, não MySQL
+import { drizzle } from "drizzle-orm/node-postgres";
 import { InsertUser, users, modules, students, classes, takes, banners, notifications, Module, Student, Class, Take, Banner, Notification, InsertModule, InsertStudent, InsertClass, InsertTake, InsertBanner, InsertNotification } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -68,7 +70,10 @@ export async function upsertUser(user: InsertUser): Promise<void> {
       updateSet.lastSignedIn = new Date();
     }
 
-    await db.insert(users).values(values).onDuplicateKeyUpdate({
+    // CORRIGIDO: Trocar de onDuplicateKeyUpdate para onConflictDoUpdate (PostgreSQL)
+    // MySQL usa ON DUPLICATE KEY UPDATE, PostgreSQL usa ON CONFLICT
+    await db.insert(users).values(values).onConflictDoUpdate({
+      target: users.openId,
       set: updateSet,
     });
   } catch (error) {

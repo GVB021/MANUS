@@ -8,7 +8,8 @@ if (!connectionString) {
 export default defineConfig({
   schema: "./drizzle/schema.ts",
   out: "./drizzle",
-  dialect: "mysql",
+  // CORRIGIDO: Trocar de "mysql" para "postgresql" (Supabase usa PostgreSQL)
+  dialect: "postgresql",
   dbCredentials: {
     url: connectionString,
   },
