@@ -222,7 +222,20 @@ export const insertStaffSchema = createInsertSchema(staff).omit({ id: true });
 export const insertUserStudioRoleSchema = createInsertSchema(userStudioRoles).omit({ id: true });
 export const insertPlatformSettingSchema = createInsertSchema(platformSettings).omit({ id: true, updatedAt: true });
 
+// CORRIGIDO: Adicionar todos os tipos Insert* para evitar circular dependency
+export type InsertUserRole = z.infer<typeof insertUserRoleSchema>;
+export type InsertStudio = z.infer<typeof insertStudioSchema>;
+export type InsertStudioMembership = z.infer<typeof insertStudioMembershipSchema>;
+export type InsertNotification = z.infer<typeof insertNotificationSchema>;
+export type InsertProduction = z.infer<typeof insertProductionSchema>;
+export type InsertCharacter = z.infer<typeof insertCharacterSchema>;
+export type InsertSession = z.infer<typeof insertSessionSchema>;
+export type InsertSessionParticipant = z.infer<typeof insertSessionParticipantSchema>;
+export type InsertTake = z.infer<typeof insertTakeSchema>;
 export type InsertAuditLog = z.infer<typeof insertAuditLogSchema>;
+export type InsertStaff = z.infer<typeof insertStaffSchema>;
+export type InsertUserStudioRole = z.infer<typeof insertUserStudioRoleSchema>;
+export type InsertPlatformSetting = z.infer<typeof insertPlatformSettingSchema>;
 export type PlatformSetting = typeof platformSettings.$inferSelect;
 export type UserRole = typeof userRoles.$inferSelect;
 export type Studio = typeof studios.$inferSelect;
