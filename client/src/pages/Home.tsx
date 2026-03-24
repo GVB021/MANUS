@@ -52,7 +52,7 @@ const TEACHERS = [
   {
     name: "Daniel Ávila",
     role: "Módulo Intermediário",
-    photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=500&auto=format&fit=crop",
+    photo: "/teachers/daniel-avila.png",
     specialties: ["Sincronização", "Personagens", "Emoção"],
   },
   {
