@@ -86,7 +86,7 @@ export function getSession() {
   const sessionStore = new pgStore({
     conString: process.env.DATABASE_URL,
     conObject: ssl ? { connectionString: process.env.DATABASE_URL, ssl } : undefined,
-    createTableIfMissing: false,
+    createTableIfMissing: true,
     ttl: sessionTtlSeconds,
     tableName: "http_sessions",
   });
