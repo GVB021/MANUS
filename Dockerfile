@@ -1,49 +1,42 @@
-# Build stage
-FROM node:20-alpine AS builder
+# Build and Runtime Stage
+FROM node:20-slim
 
 WORKDIR /app
+
+# Install dependencies needed for build
+RUN apt-get update && apt-get install -y python3 make g++ && rm -rf /var/lib/apt/lists/*
 
 # Install pnpm
 RUN npm install -g pnpm@10.4.1
 
-# Copy package files
+# Copy package files and lockfile
 COPY pnpm-lock.yaml package.json ./
 COPY studio/package.json ./studio/
 COPY patches ./patches
 
-# Install dependencies
+# Install ALL dependencies (including devDeps for build)
 RUN pnpm install --frozen-lockfile
 
-# Copy source code
+# Copy the rest of the source code
 COPY . .
 
-# Build the application
+# Build main app (client + server)
 RUN pnpm build
+
+# Build studio app
 RUN pnpm studio:build
 
-# Production stage
-FROM node:20-alpine
-
-WORKDIR /app
-
-# Install pnpm
-RUN npm install -g pnpm@10.4.1
-
-# Copy package files
-COPY pnpm-lock.yaml package.json ./
-COPY studio/package.json ./studio/
-COPY patches ./patches
-
-# Install production dependencies only
-RUN pnpm install --frozen-lockfile --prod
-
-# Copy built application and static files from builder
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/studio/dist ./studio/dist
-
-# Set environment variables
+# Environment variables
 ENV NODE_ENV=production
 ENV PORT=5002
 
-# Start the application
+# Expose the application port
+EXPOSE 5002
+
+# The server will serve static files from /app/dist/public and /app/studio/dist
+# Ensure directories exist
+RUN mkdir -p dist studio/dist
+
+# Start the application using tsx for simplicity in production if dist/index.js is not fully bundled
+# or use the bundled version if preferred. Let's stick to the bundled one.
 CMD ["node", "dist/index.js"]
