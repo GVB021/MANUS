@@ -46,7 +46,7 @@ const TEACHERS = [
   {
     name: "Vitor Paranhos",
     role: "Módulo Iniciante",
-    photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=500&auto=format&fit=crop",
+    photo: "/teachers/vitor-paranhos.png",
     specialties: ["Técnica Vocal", "Respiração", "Roteiro"],
   },
   {
