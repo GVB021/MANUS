@@ -1,33 +1,42 @@
-# Build and Runtime Stage
+# Single-stage production build
 FROM node:20-slim
 
 WORKDIR /app
 
-# Install dependencies needed for build
+# Install system dependencies
 RUN apt-get update && apt-get install -y python3 make g++ && rm -rf /var/lib/apt/lists/*
 
 # Install pnpm
 RUN npm install -g pnpm@10.4.1
 
-# Copy all source code first so pnpm can see all package.json files in the workspace
+# Copy all source code and configuration files
 COPY . .
 
-# Install dependencies without --frozen-lockfile to allow pnpm to reconcile the workspace lockfile
-# and use --recursive to ensure all subpackages are installed
+# Install dependencies recursively (pnpm respects pnpm-workspace.yaml)
 RUN pnpm install --recursive
 
-# Build main app (client + server)
-RUN pnpm build
+# Build client (root vite build)
+RUN pnpm exec vite build --config vite.config.ts
 
-# Build studio app
-RUN pnpm studio:build
+# Build server (esbuild)
+RUN pnpm exec esbuild server/_core/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
 
-# Environment variables
+# Build studio client
+RUN cd studio && pnpm exec vite build --config vite.config.ts
+
+# Build studio server
+RUN cd studio && pnpm exec esbuild server/index.ts --platform=node --packages=external --bundle --format=cjs --outfile=../dist/index.cjs
+
+# Environment configuration
 ENV NODE_ENV=production
 ENV PORT=5002
 
-# Expose the application port
+# Expose port
 EXPOSE 5002
 
-# Start the application
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:5002/health', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
+
+# Start application
 CMD ["node", "dist/index.js"]
