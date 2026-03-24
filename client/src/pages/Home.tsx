@@ -102,10 +102,10 @@ export default function Home() {
           </nav>
 
           <div className="flex items-center gap-3">
-            <a href="http://localhost:3001" className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+            <a href="window.location.origin.includes('localhost') ? 'http://localhost:3001' : window.location.origin + '/hub-dub'" className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
               Login
             </a>
-            <a href="http://localhost:3001" className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity">
+            <a href="window.location.origin.includes('localhost') ? 'http://localhost:3001' : window.location.origin + '/hub-dub'" className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity">
               Cadastro
             </a>
           </div>
@@ -196,7 +196,7 @@ export default function Home() {
                       <p className="text-white/90 text-xl leading-relaxed mb-8 max-w-xl">
                         {mod.desc}
                       </p>
-                      <a href="http://localhost:3001" className={i === 1 ? 'flex justify-end' : 'block'}>
+                      <a href="window.location.origin.includes('localhost') ? 'http://localhost:3001' : window.location.origin + '/hub-dub'" className={i === 1 ? 'flex justify-end' : 'block'}>
                         <button className="px-10 py-4 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl text-lg font-bold transition-all hover:scale-105 shadow-lg shadow-primary/30">
                           Matricular neste módulo
                         </button>
@@ -280,7 +280,7 @@ export default function Home() {
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
             Inscreva-se agora e junte-se a uma comunidade de profissionais da dublagem.
           </p>
-          <a href="http://localhost:3001">
+          <a href="window.location.origin.includes('localhost') ? 'http://localhost:3001' : window.location.origin + '/hub-dub'">
             <button className="px-12 py-4 bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl text-lg font-bold transition-all hover:scale-105 shadow-lg shadow-primary/30">
               Matricule-se Agora
             </button>

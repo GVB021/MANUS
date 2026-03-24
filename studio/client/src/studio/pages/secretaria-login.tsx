@@ -15,7 +15,7 @@ export default function SecretariaLogin() {
   if (user) {
     // If already logged in, redirect to studios or dashboard
     // Ideally this would go to a specific secretariat dashboard if one existed
-    setLocation("/studios");
+    setLocation("/hub-dub/studios");
     return null;
   }
 
@@ -27,7 +27,7 @@ export default function SecretariaLogin() {
         toast({ title: "Erro ao entrar na Secretaria", description: err.message, variant: "destructive" });
       },
       onSuccess: () => {
-        setLocation("/studios");
+        setLocation("/hub-dub/studios");
       }
     });
   };

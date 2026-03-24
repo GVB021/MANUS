@@ -151,7 +151,7 @@ function Slide2({ t }: { t: any }) {
           <p className="text-lg md:text-2xl text-muted-foreground font-medium mb-8 max-w-lg leading-relaxed tracking-tight">
             {t.landing.trinity.builder.desc}
           </p>
-          <Link href="/studios">
+          <Link href="/hub-dub/studios">
             <Button variant="outline" className="rounded-full px-8 h-12 bg-white/60 border-black/10 hover:bg-white/70 vhub-hover-lift">
               Launch Studio <ArrowRight className="w-4 h-4" />
             </Button>
@@ -165,7 +165,7 @@ function Slide2({ t }: { t: any }) {
           transition={{ duration: 1, ease: "easeOut" }}
           className="relative cursor-pointer"
         >
-          <Link href="/studios">
+          <Link href="/hub-dub/studios">
             <div
               className="relative aspect-[16/10] bg-card rounded-2xl border border-border/60 shadow-2xl overflow-hidden vhub-hover-lift transition-transform duration-500"
               style={{ transform: "perspective(1000px) rotateY(-10deg)" }}
@@ -213,7 +213,7 @@ function Slide3({ t }: { t: any }) {
           whileInView={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8 }}
         >
-          <Link href="/login">
+          <Link href="/hub-dub/login">
             <div className="grid grid-cols-2 gap-6 cursor-pointer group">
               <motion.div
                 initial={{ opacity: 0, y: 50 }}
@@ -268,7 +268,7 @@ function Slide3({ t }: { t: any }) {
           <p className="text-lg md:text-2xl text-muted-foreground font-medium mb-8 max-w-lg leading-relaxed tracking-tight">
             {t.landing.trinity.learn.desc}
           </p>
-          <Link href="/login">
+          <Link href="/hub-dub/login">
             <Button className="bg-foreground hover:bg-foreground/90 text-background rounded-full px-8 h-12 vhub-hover-lift vhub-shine">
               Enter <ArrowRight className="w-4 h-4" />
             </Button>
@@ -301,7 +301,7 @@ function Slide4({ t }: { t: any }) {
           <p className="text-lg md:text-2xl text-muted-foreground font-medium mb-8 max-w-lg leading-relaxed tracking-tight">
             {t.landing.trinity.adr.desc}
           </p>
-          <Link href="/login">
+          <Link href="/hub-dub/login">
             <Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-8 h-12 font-medium vhub-hover-lift vhub-shine">
               Start <ArrowRight className="w-4 h-4" />
             </Button>
@@ -314,7 +314,7 @@ function Slide4({ t }: { t: any }) {
           transition={{ duration: 1 }}
           className="relative h-[400px] w-full vhub-card overflow-hidden cursor-pointer transition-colors"
         >
-          <Link href="/login">
+          <Link href="/hub-dub/login">
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="w-full h-32 relative">
                 <motion.div
