@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { Mic, ArrowLeft, Mail, Lock } from 'lucide-react';
 import { Button } from './ui/button';
-import { firebaseService } from '../services/firebaseService';
+import { databaseService } from '../services/databaseService';
 
 export function Login({ onLogin, onBack }: { onLogin: (user: any) => void, onBack: () => void }) {
   const [email, setEmail] = useState('');
@@ -15,7 +15,7 @@ export function Login({ onLogin, onBack }: { onLogin: (user: any) => void, onBac
     setIsLoading(true);
     setError(null);
     try {
-      const result = await firebaseService.signIn(email, password);
+      const result = await databaseService.signIn(email, password);
       if (result.user) {
         onLogin(result.user);
       }

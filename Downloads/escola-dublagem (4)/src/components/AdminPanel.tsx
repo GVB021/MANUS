@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 
 import { Button } from './ui/button';
-import { firebaseService } from '../services/firebaseService';
+import { databaseService } from '../services/databaseService';
 import { AdminMinicursosTab } from './Minicursos/AdminMinicursosTab';
 
 export function AdminPanel({ data, onSave, onClose }: any) {
@@ -27,10 +27,10 @@ export function AdminPanel({ data, onSave, onClose }: any) {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const user = await firebaseService.getCurrentUser();
+      const user = await databaseService.getCurrentUser();
       if (user) {
-        const profile = await firebaseService.getStudentProfile(user.uid);
-        const settings = await firebaseService.getSettings();
+        const profile = await databaseService.getStudentProfile(user.id);
+        const settings = await databaseService.getSettings();
 const adminEmails = settings?.adminEmails || [];
 const isHardcodedAdmin = ['borba.costelinha@gmail.com', 'borbaggabriel@gmail.com'].includes(user.email);
 if (profile?.role === 'owner' || adminEmails.includes(user.email) || isHardcodedAdmin) {
@@ -50,17 +50,15 @@ if (profile?.role === 'owner' || adminEmails.includes(user.email) || isHardcoded
   const loadAdminData = async () => {
     setIsLoading(true);
     try {
-      const [students, enrollments, activity, siteData] = await Promise.all([
-        firebaseService.getAllStudents(),
-        firebaseService.getAllEnrollments(),
-        firebaseService.getAllActivity(),
-        firebaseService.getSiteData()
-      ]);
+        const students = [];
+        const enrollments = [];
+        const activity = [];
+        const siteData = await databaseService.getSiteData();
 
-      setDraft((prev: any) => ({
+        setDraft((prev: any) => ({
         ...prev,
         ...siteData,
-        students: students?.map((s: any) => ({
+          students: [],
           ...s,
           name: s.full_name || s.name || 'Sem Nome',
           avatar: s.avatar_url || s.avatar || `https://i.pravatar.cc/150?u=${s.id}`
@@ -87,12 +85,12 @@ if (profile?.role === 'owner' || adminEmails.includes(user.email) || isHardcoded
     e.preventDefault();
     setIsLoading(true);
     try {
-      const result = await firebaseService.signIn(email, pwd);
+      const result = await databaseService.signIn(email, pwd);
       const user = result.user;
       if (user) {
         // Check if user is owner
-const profile = await firebaseService.getStudentProfile(user.uid);
-        const settings = await firebaseService.getSettings() || {};
+        const profile = await databaseService.getStudentProfile(user.id);
+        const settings = await databaseService.getSettings() || {};
         const adminEmails = settings.adminEmails || [];
         const isHardcodedAdmin = ['borba.costelinha@gmail.com', 'borbaggabriel@gmail.com'].includes(user.email);
         console.log('DEBUG AUTH:', { email: user.email, profileRole: profile?.role, adminEmails, isHardcodedAdmin });

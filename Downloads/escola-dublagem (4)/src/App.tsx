@@ -12,7 +12,7 @@ import { AdminPanel } from './components/AdminPanel';
 import { Login } from './components/Login';
 import { StudentDashboard } from './components/StudentDashboard';
 import { Enrollment } from './components/Enrollment';
-import { firebaseService } from './services/firebaseService';
+import { databaseService } from './services/databaseService';
 
 const TeacherCard = ({ teacher, index }: any) => {
   const [isFlipped, setIsFlipped] = useState(false);
@@ -95,8 +95,8 @@ function App() {
     const loadData = async () => {
       try {
         const [data, user] = await Promise.all([
-          firebaseService.getSiteData(),
-          firebaseService.getCurrentUser()
+          databaseService.getSiteData(),
+          databaseService.getCurrentUser()
         ]);
 
         if (data) {
@@ -112,7 +112,7 @@ function App() {
           await loadStudentData(user.uid);
         }
       } catch (error) {
-        console.error('Failed to load data from Firebase:', error);
+        console.error('Failed to load data:', error);
       } finally {
         setIsLoading(false);
       }
@@ -124,9 +124,9 @@ function App() {
   const loadStudentData = async (userId: string) => {
     try {
       const [profile, enrollments, activity] = await Promise.all([
-        firebaseService.getStudentProfile(userId),
-        firebaseService.getStudentEnrollments(userId),
-        firebaseService.getStudentActivity(userId)
+        databaseService.getStudentProfile(userId),
+        databaseService.getStudentEnrollments(userId),
+        databaseService.getStudentActivity(userId)
       ]);
 
       setStudentData({
@@ -147,13 +147,14 @@ function App() {
     setCurrentUser(user);
     setIsLoginOpen(false);
     setIsLoading(true);
-    await loadStudentData(user.uid);
+    // Use optional chaining to safely access uid property
+    await loadStudentData(user?.uid || user?.id);
     setIsLoading(false);
     setIsStudentDashboardOpen(true);
   };
 
   const handleLogout = async () => {
-    await firebaseService.signOut();
+    await databaseService.signOut();
     setCurrentUser(null);
     setStudentData(null);
     setIsStudentDashboardOpen(false);
@@ -166,7 +167,7 @@ function App() {
 
   const handleNewEnrollment = async (enrollment: any) => {
     try {
-      const newEnrollment = await firebaseService.createEnrollment({
+      const newEnrollment = await databaseService.createEnrollment({
         name: enrollment.name,
         email: enrollment.email,
         phone: enrollment.phone,
@@ -179,8 +180,8 @@ function App() {
         enrollments: [newEnrollment, ...(prev.enrollments || [])]
       }));
     } catch (error) {
-      console.error('Failed to create enrollment in Firebase:', error);
-      // Fallback to local state if Firebase fails
+      console.error('Failed to create enrollment:', error);
+      // Fallback to local state if database operation fails
       const fallbackEnrollment = {
         ...enrollment,
         id: Date.now(),

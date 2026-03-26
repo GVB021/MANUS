@@ -1,44 +1,29 @@
-# 🚀 ROADMAP CORREÇÕES CRÍTICAS (15min → Production)
+# 🎭 REESTRUTURAÇÃO V2.0 — Escola de Dublagem Unificada
 
-## **🔴 PRIORIDADE 1: SECURITY ADMIN (5min)**
-```
-[X] 1. Remover emails hardcoded AdminPanel.tsx
-[X] 2. Firebase Custom Claims OR profiles.role = 'admin'
-[X] 3. Firestore rule: allow write: if (resource.data.role == 'admin')
-```
+## FASE 1: Consolidação de Infraestrutura (O Alicerce)
+- [✅] 1.1 Criar `src/lib/supabase.ts` (substituir firebase.ts)
+- [✅] 1.2 Editar `src/lib/env.ts` (validar Supabase vars)
+- [✅] 1.3 Reescrever `src/services/databaseService.ts` (Supabase-only)
+- [✅] 1.4 Editar `src/components/AdminPanel.tsx` (trocar firebaseService → databaseService)
+- [✅] 1.5 Editar `src/components/Login.tsx` (trocar firebaseService → databaseService)
+- [✅] 1.6 Confirmar `src/store/minicursosStore.ts` (já usa databaseService ✅)
+- [✅] 1.7 Deletar `src/lib/firebase.ts`, `src/services/firebaseService.ts`
+- [✅] 1.8 Editar `package.json` (remover firebase)
+- [✅] 1.9 Editar `scripts/setup-database.js` (adicionar tabelas studios, productions, sessions)
 
-## **🟡 PRIORIDADE 2: CLEANUP (3min)**
-```
-[X] npm uninstall @supabase/supabase-js
-[X] rm Supabase refs data.ts/AdminPanel settings
-```
+## FASE 2: Engine de Áudio Profissional (O Coração) ✅
+ - [✅] 2.1 `microphoneManager.ts` otimizado (device enum, peak meter, high-fidelity chain)
+ - [✅] 2.2 `recordingEngine.ts` otimizado (AudioWorklet, ScriptProcessor fallback)
+ - [✅] 2.3 `wavEncoder.ts` 24-bit + normalize/noiseGate/fade
+ - [✅] 2.4 `qualityAnalysis.ts` (clipping, SNR, loudness, feedback português)
 
-## **🟢 PRIORIDADE 3: ERRORBOUNDARY (5min)**
-```
-[X] src/ErrorBoundary.tsx → main.tsx
-[X] Global crash protection
-```
 
-## **🔵 BONUS: AdminMinicursosTab (2min)**
-```
-[X] Pass draft prop → onSave
-[X] Thumbnail preview form
-```
 
-## **💰 STRIPE (DEPOIS)**
-```
-[ ] VITE_STRIPE_PUBLIC_KEY=pk_live_...
-[ ] Payment intents backend
-```
+## FASE 3: UX/UI e Roteamento (A Face do Produto)
+- [✅] 3.1 `src/index.css` (Midnight Blue #191970 + Aged Bronze #804A00)
+- [✅] 3.2 `server.js` unificado (CORS + WebSocket + Supabase APIs)
+- [✅] 3.3 `vite.config.ts` (code splitting + es2022 + vendor chunks)
 
----
-
-**EXECUTE**:
-```bash
-npm uninstall @supabase/supabase-js
-# Edit AdminPanel: profiles.role check
-# Add ErrorBoundary main.tsx
-npm run build  # Test production
-```
-
-**Resultado**: 100% PROD READY 🚀
+## FASE 4: Preparação Railway (O Lançamento) ✅
+- [✅] 4.1 `package.json` unificado + scripts multi-app
+- [✅] 4.2 `railway.json` otimizado (Nixpacks + healthcheck + auto-deploy)

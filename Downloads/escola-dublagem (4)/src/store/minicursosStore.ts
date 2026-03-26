@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { firebaseService } from '../services/firebaseService';
+import { databaseService } from '../services/databaseService';
 import type { Course, Lesson } from '../types/minicursos';
 
 interface MinicursosState {
@@ -19,7 +19,7 @@ export const useMinicursosStore = create<MinicursosState>((set, get) => ({
   loadCourses: async () => {
     set({ isLoading: true });
     try {
-      const courses = await firebaseService.getMinicursos();
+      const courses = await databaseService.getMinicursos();
       set({ courses });
     } catch (error) {
       console.error('Failed to load minicursos:', error);
@@ -29,7 +29,7 @@ export const useMinicursosStore = create<MinicursosState>((set, get) => ({
   },
   updateProgress: async (courseId: string, lessonId: string, progress: number) => {
     try {
-      await firebaseService.updateMinicursoProgress(courseId, lessonId, progress);
+      await databaseService.updateMinicursoProgress(courseId, lessonId, progress);
       set(state => ({
         userProgress: {
           ...state.userProgress,

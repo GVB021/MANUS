@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Toaster, toast } from 'sonner';
 import { Plus, Trash2, Edit3, Video, BookOpen } from 'lucide-react';
 import { Button } from '../ui/button';
-import { firebaseService } from '../../services/firebaseService';
+import { databaseService } from '../../services/databaseService';
 import { CourseGrid } from './CourseGrid';
 
 export const AdminMinicursosTab = ({ onSave }: { onSave: any }) => {
@@ -17,7 +17,7 @@ export const AdminMinicursosTab = ({ onSave }: { onSave: any }) => {
 
   const loadCourses = async () => {
     try {
-      const courses = await firebaseService.getMinicursos();
+      const courses = await databaseService.getMinicursos();
       setCourses(courses);
     } catch (error) {
       toast.error('Erro ao carregar minicursos');
@@ -28,7 +28,7 @@ export const AdminMinicursosTab = ({ onSave }: { onSave: any }) => {
 
   const handleAddCourse = async () => {
     try {
-      await firebaseService.createMinicurso(newCourse);
+      await databaseService.createMinicurso(newCourse);
       toast.success('Minicurso criado!');
       setNewCourse({ title: '', description: '', imageUrl: '', videoUrl: '', duration: '' });
       loadCourses();
@@ -39,7 +39,7 @@ export const AdminMinicursosTab = ({ onSave }: { onSave: any }) => {
 
   const handleUpdateCourse = async (course) => {
     try {
-      await firebaseService.updateMinicurso(course.id, course);
+      await databaseService.updateMinicurso(course.id, course);
       toast.success('Minicurso atualizado!');
       setEditingCourse(null);
       loadCourses();
@@ -50,7 +50,7 @@ export const AdminMinicursosTab = ({ onSave }: { onSave: any }) => {
 
   const handleDeleteCourse = async (id) => {
     try {
-      await firebaseService.deleteMinicurso(id);
+      await databaseService.deleteMinicurso(id);
       toast.success('Minicurso removido!');
       loadCourses();
     } catch (error) {
