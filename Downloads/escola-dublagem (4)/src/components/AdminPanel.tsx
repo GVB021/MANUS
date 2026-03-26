@@ -11,11 +11,9 @@ import {
   HelpCircle
 } from 'lucide-react';
 
-import { AdminMinicursosTab } from './Minicursos/AdminMinicursosTab';
 import { Button } from './ui/button';
-import { AdminMinicursosTab } from './Minicursos/AdminMinicursosTab';
-
 import { firebaseService } from '../services/firebaseService';
+import { AdminMinicursosTab } from './Minicursos/AdminMinicursosTab';
 
 export function AdminPanel({ data, onSave, onClose }: any) {
   const [auth, setAuth] = useState(false);
@@ -301,8 +299,6 @@ const tabs = [
     { id: 'banners', label: 'Banners', icon: ImageIcon },
     { id: 'settings', label: 'Configurações', icon: Settings },
   ];
-
-  import { AdminMinicursosTab } from './Minicursos/AdminMinicursosTab';
 
   if (!auth) {
     return (
